@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-950 text-gray-100 antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-gray-800 bg-gray-900/80 p-6 backdrop-blur;
+  }
+
+  .agent-theory {
+    @apply border-l-4 border-conspiracy-500;
+  }
+
+  .agent-investigator {
+    @apply border-l-4 border-emerald-500;
+  }
+
+  .agent-judge {
+    @apply border-l-4 border-amber-500;
+  }
+
+  .agent-reality {
+    @apply border-l-4 border-blue-500;
+  }
+}
