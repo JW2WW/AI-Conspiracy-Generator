@@ -405,6 +405,177 @@ Final Results
 
 ---
 
+# Setup
+
+## Prerequisites
+
+* **Docker & Docker Compose** (recommended) — for running the full stack with one command
+* **Node.js 20+** — for local frontend development
+* **Python 3.12+** — for local backend development
+* **PostgreSQL 16** and **Redis 7** — required when running the backend outside Docker
+
+---
+
+## Quick Start (Docker Compose)
+
+The fastest way to run the entire platform:
+
+```bash
+# Clone the repository
+git clone https://github.com/JW2WW/AI-Conspiracy-Generator.git
+cd AI-Conspiracy-Generator
+
+# Copy environment config (mock mode works without API keys)
+cp .env.example .env
+
+# Build and start all services
+docker compose up --build
+```
+
+Once running:
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:5173 |
+| API | http://localhost:8000 |
+| API Docs (Swagger) | http://localhost:8000/docs |
+
+Enter an event (e.g. *"Why did the neighborhood power go out?"*), pick a game mode, and click **Generate Conspiracy**.
+
+To stop:
+
+```bash
+docker compose down
+```
+
+---
+
+## Configuration
+
+Copy `.env.example` to `.env` and adjust as needed:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `LLM_PROVIDER` | `mock` | LLM backend: `mock`, `openai`, or `anthropic` |
+| `OPENAI_API_KEY` | — | Required when `LLM_PROVIDER=openai` |
+| `ANTHROPIC_API_KEY` | — | Required when `LLM_PROVIDER=anthropic` |
+| `DATABASE_URL` | `postgresql+asyncpg://conspiracy:conspiracy@localhost:5432/conspiracy` | PostgreSQL connection string |
+| `REDIS_URL` | `redis://localhost:6379/0` | Redis connection string |
+
+**Mock mode** works out of the box with no API keys — it uses template-based responses for demo and development. Set `LLM_PROVIDER=openai` or `anthropic` and provide the corresponding API key for live LLM-generated theories.
+
+---
+
+## Local Development
+
+### Backend
+
+```bash
+cd backend
+
+# Create virtual environment and install dependencies
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# Start PostgreSQL and Redis (or use Docker for just these services)
+docker compose up postgres redis -d
+
+# Run the API server
+export DATABASE_URL=postgresql+asyncpg://conspiracy:conspiracy@localhost:5432/conspiracy
+export REDIS_URL=redis://localhost:6379/0
+export LLM_PROVIDER=mock
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+API available at http://localhost:8000 — interactive docs at http://localhost:8000/docs.
+
+### Frontend
+
+```bash
+cd frontend
+
+npm install
+npm run dev
+```
+
+Dev server runs at http://localhost:5173 and proxies `/api` requests to the backend on port 8000.
+
+### Production build (frontend only)
+
+```bash
+cd frontend
+npm run build
+npm run preview
+```
+
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/health` | Health check and active LLM provider |
+| `GET` | `/api/modes` | List available game modes |
+| `POST` | `/api/generate` | Run the full agent pipeline |
+| `GET` | `/api/sessions/{id}` | Retrieve a past generation session |
+
+### Example request
+
+```bash
+curl -X POST http://localhost:8000/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event": "Why did the neighborhood power go out?",
+    "game_mode": "classic",
+    "rounds": 1
+  }'
+```
+
+### Game modes
+
+| Mode | Value | Description |
+|------|-------|-------------|
+| Classic Conspiracy | `classic` | Elaborate theories with escalating absurdity |
+| X-Files | `xfiles` | Aliens, coverups, paranormal activity |
+| Corporate Conspiracy | `corporate` | Blame a fictional mega-corporation |
+| Time Traveler | `time_traveler` | Timeline manipulation and paradoxes |
+| Ancient Civilization | `ancient` | Lost civilizations and ancient technology |
+| AI Debate | `debate` | Multi-round theory vs. investigation debate |
+| Escalation | `escalation` | Each round more absurd than the last |
+
+For `debate` and `escalation` modes, set `rounds` (1–5) to control how many debate rounds run.
+
+---
+
+## Project Structure
+
+```text
+AI-Conspiracy-Generator/
+├── backend/
+│   ├── app/
+│   │   ├── agents/          # Theory, Investigator, Judge, Evidence agents
+│   │   ├── api/             # FastAPI routes
+│   │   ├── models/          # Pydantic schemas and database models
+│   │   ├── services/        # LLM providers and orchestration
+│   │   ├── config.py        # Settings from environment
+│   │   └── main.py          # FastAPI application entry point
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # React UI components
+│   │   ├── api/             # API client
+│   │   └── App.tsx          # Main application
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+---
+
 # Future Enhancements
 
 ## Multiplayer Theory Battles
