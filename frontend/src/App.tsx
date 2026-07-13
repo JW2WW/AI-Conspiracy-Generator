@@ -11,14 +11,29 @@ export default function App() {
   const [gameMode, setGameMode] = useState<GameMode>('classic')
   const [rounds, setRounds] = useState(3)
   const [modes, setModes] = useState<GameModeInfo[]>([])
+  const [modesLoading, setModesLoading] = useState(true)
   const [result, setResult] = useState<ConspiracyResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [llmProvider, setLlmProvider] = useState('mock')
 
   useEffect(() => {
-    getGameModes().then(setModes).catch(console.error)
-    getHealth().then((h) => setLlmProvider(h.llm_provider)).catch(console.error)
+    const abort = new AbortController()
+
+    getGameModes()
+      .then(setModes)
+      .catch(console.error)
+      .finally(() => {
+        if (!abort.signal.aborted) setModesLoading(false)
+      })
+
+    getHealth()
+      .then((h) => {
+        if (!abort.signal.aborted) setLlmProvider(h.llm_provider)
+      })
+      .catch(console.error)
+
+    return () => abort.abort()
   }, [])
 
   const handleGenerate = useCallback(async () => {
@@ -41,6 +56,11 @@ export default function App() {
     }
   }, [event, gameMode, rounds])
 
+  const handleStartOver = useCallback(() => {
+    setResult(null)
+    setError(null)
+  }, [])
+
   return (
     <div className="min-h-screen">
       <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur">
@@ -60,26 +80,42 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <div className="card mb-8">
-          <EventInput
-            value={event}
-            onChange={setEvent}
-            onSubmit={handleGenerate}
-            loading={loading}
-          />
+        {!result && (
+          <div className="card mb-8">
+            <EventInput
+              value={event}
+              onChange={setEvent}
+              onSubmit={handleGenerate}
+              loading={loading}
+            />
 
-          {modes.length > 0 && (
-            <div className="mt-6 border-t border-gray-800 pt-6">
-              <GameModeSelector
-                modes={modes}
-                selected={gameMode}
-                onChange={setGameMode}
-                rounds={rounds}
-                onRoundsChange={setRounds}
-              />
-            </div>
-          )}
-        </div>
+            {modesLoading ? (
+              <div className="mt-6 border-t border-gray-800 pt-6">
+                <div className="h-4 w-24 animate-pulse rounded bg-gray-800" />
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-24 animate-pulse rounded-lg border border-gray-800 bg-gray-900"
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              modes.length > 0 && (
+                <div className="mt-6 border-t border-gray-800 pt-6">
+                  <GameModeSelector
+                    modes={modes}
+                    selected={gameMode}
+                    onChange={setGameMode}
+                    rounds={rounds}
+                    onRoundsChange={setRounds}
+                  />
+                </div>
+              )
+            )}
+          </div>
+        )}
 
         {error && (
           <div className="mb-8 rounded-lg border border-red-800 bg-red-950/50 p-4 text-red-300">
@@ -89,7 +125,20 @@ export default function App() {
 
         {loading && <LoadingSpinner />}
 
-        {result && !loading && <ResultsDisplay result={result} />}
+        {result && !loading && (
+          <>
+            <ResultsDisplay result={result} />
+            <div className="mt-8 text-center">
+              <button
+                type="button"
+                onClick={handleStartOver}
+                className="rounded-lg border border-gray-700 px-6 py-3 font-semibold text-gray-300 transition hover:border-conspiracy-600 hover:text-conspiracy-300"
+              >
+                Generate Another Conspiracy
+              </button>
+            </div>
+          </>
+        )}
       </main>
 
       <footer className="border-t border-gray-800 py-6 text-center text-xs text-gray-500">

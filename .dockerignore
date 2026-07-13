@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env
+.env.example
+LICENSE
+README.md
+.vscode/
+.idea/
+*.swp
+.DS_Store

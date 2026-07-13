@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import Any
 
@@ -12,14 +13,6 @@ class GameMode(str, Enum):
     ANCIENT = "ancient"
     DEBATE = "debate"
     ESCALATION = "escalation"
-
-
-class AgentRole(str, Enum):
-    THEORY = "theory"
-    INVESTIGATOR = "investigator"
-    JUDGE = "judge"
-    EVIDENCE = "evidence"
-    REALITY = "reality"
 
 
 class DebateRound(BaseModel):
@@ -52,6 +45,7 @@ class ConspiracyResponse(BaseModel):
     debate_rounds: list[DebateRound] = []
     scores: ScoreBreakdown
     reality_restored: str
+    created_at: datetime | None = None
     metadata: dict[str, Any] = {}
 
 

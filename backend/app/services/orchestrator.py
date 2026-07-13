@@ -1,6 +1,8 @@
+from datetime import datetime, timezone
+import asyncio
+import hashlib
 import json
 import uuid
-from typing import Any
 
 import redis.asyncio as redis
 
@@ -12,11 +14,14 @@ from app.agents import (
     TheoryAgent,
 )
 from app.config import settings
-from app.models.schemas import ConspiracyRequest, ConspiracyResponse, DebateRound, GameMode, ScoreBreakdown
+from app.models.schemas import ConspiracyRequest, ConspiracyResponse, DebateRound, ScoreBreakdown
 from app.services.llm import get_llm_provider
+from app.services.sanitizer import sanitize_event
 
 
 class ConspiracyOrchestrator:
+    _TIMEOUT_SECONDS = 120
+
     def __init__(self) -> None:
         llm = get_llm_provider()
         self.theory_agent = TheoryAgent(llm)
@@ -32,12 +37,20 @@ class ConspiracyOrchestrator:
         return self._redis
 
     def _rounds_for_mode(self, request: ConspiracyRequest) -> int:
-        if request.game_mode in (GameMode.DEBATE, GameMode.ESCALATION):
-            return max(request.rounds, 3)
         return max(request.rounds, 1)
 
     async def generate(self, request: ConspiracyRequest) -> ConspiracyResponse:
-        cache_key = f"conspiracy:{request.game_mode.value}:{hash(request.event)}:{request.rounds}"
+        try:
+            return await asyncio.wait_for(
+                self._generate_inner(request), timeout=self._TIMEOUT_SECONDS
+            )
+        except asyncio.TimeoutError:
+            raise RuntimeError("Generation timed out. Try a simpler event or fewer rounds.")
+
+    async def _generate_inner(self, request: ConspiracyRequest) -> ConspiracyResponse:
+        safe_event = sanitize_event(request.event)
+        event_hash = hashlib.md5(safe_event.encode()).hexdigest()
+        cache_key = f"conspiracy:{request.game_mode.value}:{event_hash}:{request.rounds}"
         r = await self._get_redis()
         cached = await r.get(cache_key)
         if cached:
@@ -45,7 +58,7 @@ class ConspiracyOrchestrator:
             return ConspiracyResponse(**data)
 
         num_rounds = self._rounds_for_mode(request)
-        evidence = await self.evidence_agent.gather(request.event)
+        evidence = await self.evidence_agent.gather(safe_event)
 
         debate_rounds: list[DebateRound] = []
         all_theories: list[str] = []
@@ -57,10 +70,10 @@ class ConspiracyOrchestrator:
 
         for round_num in range(1, num_rounds + 1):
             theory = await self.theory_agent.generate(
-                request.event, request.game_mode, round_num, context
+                safe_event, request.game_mode, round_num, context
             )
             investigation = await self.investigator_agent.investigate(
-                request.event, theory, round_num
+                safe_event, theory, round_num
             )
 
             debate_rounds.append(
@@ -72,10 +85,10 @@ class ConspiracyOrchestrator:
             final_investigation = investigation
             context += f"\n\nRound {round_num} Theory: {theory}\nRound {round_num} Investigation: {investigation}"
 
-        scores_raw = await self.judge_agent.score(request.event, final_theory, final_investigation)
+        scores_raw = await self.judge_agent.score(safe_event, final_theory, final_investigation)
         scores = ScoreBreakdown(**scores_raw)
 
-        reality = await self.reality_engine.reveal(request.event, all_theories, all_investigations)
+        reality = await self.reality_engine.reveal(safe_event, all_theories, all_investigations)
 
         response = ConspiracyResponse(
             id=str(uuid.uuid4()),
@@ -87,6 +100,7 @@ class ConspiracyOrchestrator:
             debate_rounds=debate_rounds,
             scores=scores,
             reality_restored=reality,
+            created_at=datetime.now(timezone.utc),
             metadata={"llm_provider": settings.llm_provider, "rounds": num_rounds},
         )
 

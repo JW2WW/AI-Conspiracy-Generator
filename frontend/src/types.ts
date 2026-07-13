@@ -37,6 +37,7 @@ export interface ConspiracyResponse {
   debate_rounds: DebateRound[]
   scores: ScoreBreakdown
   reality_restored: string
+  created_at?: string
   metadata: Record<string, unknown>
 }
 

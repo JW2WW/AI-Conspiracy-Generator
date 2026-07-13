@@ -2,9 +2,9 @@
 
 An AI-powered comedy platform where one AI agent creates increasingly ridiculous conspiracy theories while another AI agent investigates, fact-checks, and debunks them.
 
-The goal is not to promote misinformation.
-
-The goal is to demonstrate how easily narratives can be constructed around incomplete information while using humor, critical thinking, and adversarial AI reasoning to separate fact from fiction.
+> **The goal is not to promote misinformation.**
+>
+> The goal is to demonstrate how easily narratives can be constructed around incomplete information while using humor, critical thinking, and adversarial AI reasoning to separate fact from fiction.
 
 ---
 
@@ -26,6 +26,12 @@ The result is a humorous demonstration of how narratives, assumptions, and specu
 
 ---
 
+# Screenshots
+
+> *Screenshots coming soon — contributions welcome!*
+
+---
+
 # Why This Project Exists
 
 Humans are naturally wired to seek patterns and explanations.
@@ -34,12 +40,12 @@ Given limited information, it is surprisingly easy to construct convincing stori
 
 AI Conspiracy Generator uses humor to illustrate:
 
-* Confirmation bias
-* Narrative construction
-* Critical thinking
-* Evidence evaluation
-* Fact checking
-* Adversarial reasoning
+- Confirmation bias
+- Narrative construction
+- Critical thinking
+- Evidence evaluation
+- Fact checking
+- Adversarial reasoning
 
 The platform is designed as entertainment first and educational second.
 
@@ -49,7 +55,7 @@ The platform is designed as entertainment first and educational second.
 
 Input:
 
-```text id="6xv4nr"
+```text
 Why did the neighborhood power go out?
 ```
 
@@ -59,7 +65,7 @@ Why did the neighborhood power go out?
 
 Creates a conspiracy theory.
 
-```text id="w9ry2z"
+```text
 The outage coincided with a full moon,
 three missing cats, and a delivery truck
 from an unknown company.
@@ -75,7 +81,7 @@ electromagnetic acorn technology.
 
 Examines the evidence.
 
-```text id="n2ck1h"
+```text
 Utility company records show
 a contractor accidentally struck
 a transformer with a backhoe
@@ -91,7 +97,7 @@ acorns was discovered.
 
 Scores the theory.
 
-```text id="q7tu4e"
+```text
 Creativity: 10/10
 
 Plausibility: 0/10
@@ -113,10 +119,10 @@ Multiple AI agents with competing objectives.
 
 Responsible for:
 
-* Creating theories
-* Connecting unrelated events
-* Escalating absurdity
-* Defending its claims
+- Creating theories
+- Connecting unrelated events
+- Escalating absurdity
+- Defending its claims
 
 ---
 
@@ -124,10 +130,10 @@ Responsible for:
 
 Responsible for:
 
-* Fact checking
-* Evidence review
-* Logical analysis
-* Debunking claims
+- Fact checking
+- Evidence review
+- Logical analysis
+- Debunking claims
 
 ---
 
@@ -135,10 +141,10 @@ Responsible for:
 
 Responsible for scoring:
 
-* Creativity
-* Plausibility
-* Evidence quality
-* Entertainment value
+- Creativity
+- Plausibility
+- Evidence quality
+- Entertainment value
 
 ---
 
@@ -146,10 +152,10 @@ Responsible for scoring:
 
 Responsible for:
 
-* Gathering facts
-* Finding contradictions
-* Building timelines
-* Supporting investigations
+- Gathering facts
+- Finding contradictions
+- Building timelines
+- Supporting investigations
 
 ---
 
@@ -165,10 +171,10 @@ Create increasingly elaborate conspiracy theories.
 
 Every event must involve:
 
-* Aliens
-* Government coverups
-* Secret facilities
-* Paranormal activity
+- Aliens
+- Government coverups
+- Secret facilities
+- Paranormal activity
 
 ---
 
@@ -178,7 +184,7 @@ Every event is blamed on a fictional mega-corporation.
 
 Example:
 
-```text id="k0zn5m"
+```text
 The outage was caused by
 Global Acorn Dynamics Corporation
 to test next-generation squirrel
@@ -197,9 +203,9 @@ All events are explained through timeline manipulation.
 
 Everything traces back to:
 
-* Lost civilizations
-* Ancient technology
-* Mysterious artifacts
+- Lost civilizations
+- Ancient technology
+- Mysterious artifacts
 
 ---
 
@@ -211,26 +217,26 @@ Example:
 
 ### Round 1
 
-```text id="g1kv6o"
+```text
 Squirrels caused the outage.
 ```
 
 ### Round 2
 
-```text id="pr5gxp"
+```text
 The squirrels are organized.
 ```
 
 ### Round 3
 
-```text id="9vx5pk"
+```text
 The squirrels report to an
 interdimensional acorn council.
 ```
 
 ### Investigator
 
-```text id="n1khm6"
+```text
 The outage was caused by
 equipment damage.
 ```
@@ -251,7 +257,7 @@ After the debate concludes, the platform reveals the most likely real explanatio
 
 Example:
 
-```text id="p5k8m9"
+```text
 Actual Cause
 
 A contractor accidentally struck
@@ -266,7 +272,7 @@ Case Closed.
 
 ## Power Outage
 
-```text id="p0v5gj"
+```text
 Why did the power go out?
 ```
 
@@ -274,7 +280,7 @@ Why did the power go out?
 
 ## Missing Package
 
-```text id="a8gx3n"
+```text
 Why was my package delayed?
 ```
 
@@ -282,7 +288,7 @@ Why was my package delayed?
 
 ## Slow Internet
 
-```text id="p9b72q"
+```text
 Why is my internet slow?
 ```
 
@@ -290,7 +296,7 @@ Why is my internet slow?
 
 ## Traffic Jam
 
-```text id="k4t1hd"
+```text
 Why was traffic stopped?
 ```
 
@@ -298,7 +304,7 @@ Why was traffic stopped?
 
 ## Broken Coffee Machine
 
-```text id="d2p7fx"
+```text
 Why did the office coffee machine stop working?
 ```
 
@@ -308,12 +314,12 @@ Why did the office coffee machine stop working?
 
 Although designed as comedy, the platform demonstrates:
 
-* Confirmation bias
-* Logical fallacies
-* Correlation vs causation
-* Evidence evaluation
-* Critical thinking
-* Fact verification
+- Confirmation bias
+- Logical fallacies
+- Correlation vs causation
+- Evidence evaluation
+- Critical thinking
+- Fact verification
 
 The project encourages users to question assumptions and examine evidence.
 
@@ -321,43 +327,26 @@ The project encourages users to question assumptions and examine evidence.
 
 # Architecture
 
-```text id="r5y9zk"
+```text
 User Input
 
       │
-
       ▼
-
 Theory Agent
-
       │
-
       ▼
-
 Evidence Agent
-
       │
-
       ▼
-
 Investigator Agent
-
       │
-
       ▼
-
 Judge Agent
-
       │
-
       ▼
-
 Reality Restored Engine
-
       │
-
       ▼
-
 Final Results
 ```
 
@@ -367,41 +356,43 @@ Final Results
 
 ## Backend
 
-* Python
-* FastAPI
-* PostgreSQL
-* Redis
+- Python 3.12+
+- FastAPI
+- PostgreSQL 16
+- Redis 7
 
 ---
 
 ## AI
 
-* OpenAI GPT Models
-* Anthropic Claude
-* Local LLM Support
+- OpenAI GPT Models
+- Anthropic Claude
+- Local LLM Support (mock provider)
 
 ---
 
 ## Agent Framework
 
-* Multi-Agent Orchestration
-* Prompt Chaining
-* Reasoning Pipelines
+- Multi-Agent Orchestration
+- Prompt Chaining
+- Reasoning Pipelines
 
 ---
 
 ## Frontend
 
-* React
-* TailwindCSS
+- React 18
+- TypeScript
+- TailwindCSS
+- Vite
 
 ---
 
 ## Deployment
 
-* Docker
-* Docker Compose
-* Linux
+- Docker
+- Docker Compose
+- Linux
 
 ---
 
@@ -409,10 +400,10 @@ Final Results
 
 ## Prerequisites
 
-* **Docker & Docker Compose** (recommended) — for running the full stack with one command
-* **Node.js 20+** — for local frontend development
-* **Python 3.12+** — for local backend development
-* **PostgreSQL 16** and **Redis 7** — required when running the backend outside Docker
+- **Docker & Docker Compose** (recommended) — for running the full stack with one command
+- **Node.js 20+** — for local frontend development
+- **Python 3.12+** — for local backend development
+- **PostgreSQL 16** and **Redis 7** — required when running the backend outside Docker
 
 ---
 
@@ -461,6 +452,9 @@ Copy `.env.example` to `.env` and adjust as needed:
 | `ANTHROPIC_API_KEY` | — | Required when `LLM_PROVIDER=anthropic` |
 | `DATABASE_URL` | `postgresql+asyncpg://conspiracy:conspiracy@localhost:5432/conspiracy` | PostgreSQL connection string |
 | `REDIS_URL` | `redis://localhost:6379/0` | Redis connection string |
+| `POSTGRES_USER` | `conspiracy` | PostgreSQL user (Docker only) |
+| `POSTGRES_PASSWORD` | `conspiracy` | PostgreSQL password (Docker only) |
+| `POSTGRES_DB` | `conspiracy` | PostgreSQL database name (Docker only) |
 
 **Mock mode** works out of the box with no API keys — it uses template-based responses for demo and development. Set `LLM_PROVIDER=openai` or `anthropic` and provide the corresponding API key for live LLM-generated theories.
 
@@ -511,7 +505,89 @@ npm run preview
 
 ---
 
-## API Endpoints
+# Testing
+
+## Backend tests
+
+```bash
+cd backend
+pip install -r requirements.txt
+pytest tests/ -v
+```
+
+Tests use:
+- `pytest` and `pytest-asyncio` for async test support
+- `fakeredis` to mock Redis without a running server
+- The `MockProvider` which works without any API keys
+
+### Writing tests
+
+Tests are located in `backend/tests/` and follow these conventions:
+
+- `test_llm.py` — tests for LLM providers and score parsing
+- `test_agents.py` — tests for individual agent classes
+- `test_orchestrator.py` — tests for the full orchestration pipeline
+- `conftest.py` — shared fixtures (Redis mocking)
+
+## Frontend linting
+
+```bash
+cd frontend
+npm run lint       # ESLint
+npm run format     # Prettier
+```
+
+---
+
+# Linting & Formatting
+
+## Backend (Python)
+
+This project uses [ruff](https://docs.astral.sh/ruff/) for both linting and formatting:
+
+```bash
+cd backend
+ruff check .       # Lint
+ruff format .      # Format
+```
+
+Configuration is in `backend/pyproject.toml`.
+
+## Frontend (TypeScript/React)
+
+This project uses ESLint + Prettier:
+
+```bash
+cd frontend
+npm run lint       # ESLint
+npm run format     # Prettier
+```
+
+## Pre-commit hooks
+
+Install pre-commit to automatically lint/format on every commit:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Configuration is in `.pre-commit-config.yaml`.
+
+## CI
+
+Every push and pull request to `main` is checked via GitHub Actions (see `.github/workflows/ci.yml`):
+
+- Backend lint (`ruff check`)
+- Backend tests (`pytest`)
+- Frontend lint (`eslint`)
+- Frontend formatting (`prettier --check`)
+- Frontend build (`tsc && vite build`)
+- Docker build (`docker compose build`)
+
+---
+
+# API Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -548,7 +624,7 @@ For `debate` and `escalation` modes, set `rounds` (1–5) to control how many de
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```text
 AI-Conspiracy-Generator/
@@ -557,22 +633,102 @@ AI-Conspiracy-Generator/
 │   │   ├── agents/          # Theory, Investigator, Judge, Evidence agents
 │   │   ├── api/             # FastAPI routes
 │   │   ├── models/          # Pydantic schemas and database models
-│   │   ├── services/        # LLM providers and orchestration
+│   │   ├── services/        # LLM providers, orchestration, sanitizer
 │   │   ├── config.py        # Settings from environment
 │   │   └── main.py          # FastAPI application entry point
+│   ├── tests/               # Pytest test suite
+│   ├── pyproject.toml       # Ruff & pytest config
 │   ├── requirements.txt
+│   ├── .dockerignore
 │   └── Dockerfile
 ├── frontend/
 │   ├── src/
 │   │   ├── components/      # React UI components
 │   │   ├── api/             # API client
+│   │   ├── types.ts         # TypeScript interfaces
 │   │   └── App.tsx          # Main application
 │   ├── package.json
+│   ├── .eslintrc.cjs
+│   ├── .prettierrc
+│   ├── .dockerignore
 │   └── Dockerfile
+├── .github/
+│   └── workflows/
+│       └── ci.yml           # GitHub Actions CI
+├── .pre-commit-config.yaml  # Pre-commit hook configuration
+├── .dockerignore
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
 ```
+
+---
+
+# Troubleshooting
+
+## Docker port conflicts
+
+If ports 5432, 6379, 8000, or 5173 are already in use:
+
+```bash
+# Stop conflicting services
+docker compose down
+
+# Or change the host port mapping in docker-compose.yml, e.g.:
+#   ports:
+#     - "8001:8000"   # maps host 8001 to container 8000
+```
+
+## Redis connection errors
+
+Ensure Redis is running. If running the backend locally:
+
+```bash
+docker compose up redis -d
+export REDIS_URL=redis://localhost:6379/0
+```
+
+## Backend won't start — database error
+
+Make sure PostgreSQL is running and the `conspiracy` database exists:
+
+```bash
+docker compose up postgres -d
+```
+
+## Tests fail with "cannot connect to Redis"
+
+Tests use `fakeredis` (an in-memory Redis simulator), so no running Redis is needed. If you see this error, ensure `fakeredis` is installed:
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+## Frontend shows blank page / API errors
+
+The frontend dev server proxies `/api` requests to `http://localhost:8000`. Make sure the backend is running on port 8000. For production Docker, check `docker compose logs backend` for errors.
+
+---
+
+# Contributing
+
+Contributions are welcome! Here's how to get started:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/my-feature`
+3. Make your changes
+4. Run tests: `cd backend && pytest tests/ -v`
+5. Run linting: `cd backend && ruff check .` and `cd frontend && npm run lint`
+6. Commit with a descriptive message
+7. Push and open a Pull Request
+
+Please ensure:
+
+- Tests pass for both backend and frontend
+- New features include tests where practical
+- Code follows the existing style (ruff for Python, eslint/prettier for TypeScript)
+- Pull requests have a clear description of the change and motivation
 
 ---
 
@@ -588,9 +744,9 @@ Allow users to compete against AI.
 
 Vote on:
 
-* Funniest theory
-* Most creative theory
-* Best debunking
+- Funniest theory
+- Most creative theory
+- Best debunking
 
 ---
 
@@ -616,16 +772,16 @@ Apply the system to historical events for entertainment and educational purposes
 
 This project showcases:
 
-* Multi-Agent AI Systems
-* Prompt Engineering
-* Adversarial Reasoning
-* Agent Orchestration
-* Fact Checking Workflows
-* AI Evaluation Techniques
-* Full Stack Development
-* User Experience Design
-* Humor-Oriented Product Design
-* Python Development
+- Multi-Agent AI Systems
+- Prompt Engineering
+- Adversarial Reasoning
+- Agent Orchestration
+- Fact Checking Workflows
+- AI Evaluation Techniques
+- Full Stack Development
+- User Experience Design
+- Humor-Oriented Product Design
+- Python Development
 
 ---
 

@@ -2,15 +2,15 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: conspiracy
-      POSTGRES_PASSWORD: conspiracy
-      POSTGRES_DB: conspiracy
+      POSTGRES_USER: ${POSTGRES_USER:-conspiracy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-conspiracy}
+      POSTGRES_DB: ${POSTGRES_DB:-conspiracy}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U conspiracy"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-conspiracy}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -30,7 +30,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql+asyncpg://conspiracy:conspiracy@postgres:5432/conspiracy
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-conspiracy}:${POSTGRES_PASSWORD:-conspiracy}@postgres:5432/${POSTGRES_DB:-conspiracy}
       REDIS_URL: redis://redis:6379/0
       LLM_PROVIDER: ${LLM_PROVIDER:-mock}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -41,6 +41,12 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   frontend:
     build: ./frontend

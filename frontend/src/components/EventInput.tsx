@@ -14,8 +14,21 @@ const EXAMPLES = [
 ]
 
 export default function EventInput({ value, onChange, onSubmit, loading }: EventInputProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault()
+      onSubmit()
+    }
+  }
+
   return (
-    <div className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit()
+      }}
+      className="space-y-4"
+    >
       <div>
         <label htmlFor="event" className="block text-sm font-medium text-gray-300">
           What happened?
@@ -24,6 +37,7 @@ export default function EventInput({ value, onChange, onSubmit, loading }: Event
           id="event"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Why did the neighborhood power go out?"
           rows={3}
           className="mt-2 w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-conspiracy-500 focus:outline-none focus:ring-1 focus:ring-conspiracy-500"
@@ -44,13 +58,13 @@ export default function EventInput({ value, onChange, onSubmit, loading }: Event
       </div>
 
       <button
-        type="button"
-        onClick={onSubmit}
+        type="submit"
         disabled={loading || value.trim().length < 3}
         className="w-full rounded-lg bg-conspiracy-600 px-6 py-3 font-semibold text-white transition hover:bg-conspiracy-500 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? 'Generating Conspiracy...' : 'Generate Conspiracy'}
       </button>
-    </div>
+      <p className="text-center text-xs text-gray-500">Press Ctrl+Enter to submit</p>
+    </form>
   )
 }

@@ -3,7 +3,6 @@ import random
 import re
 from abc import ABC, abstractmethod
 
-import httpx
 from anthropic import AsyncAnthropic
 from openai import AsyncOpenAI
 
@@ -45,7 +44,7 @@ class AnthropicProvider(LLMProvider):
             messages=[{"role": "user", "content": user_prompt}],
             temperature=0.9,
         )
-        return response.content[0].text
+        return response.content[0].text if response.content else ""
 
 
 class MockProvider(LLMProvider):

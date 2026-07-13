@@ -72,7 +72,7 @@ async def generate_conspiracy(
     try:
         result = await orchestrator.generate(request)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Generation failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail="Generation failed. Please try again.") from exc
 
     session = ConspiracySession(
         id=result.id,
@@ -94,4 +94,6 @@ async def get_session(session_id: str, db: AsyncSession = Depends(get_db)) -> Co
     session = result.scalar_one_or_none()
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    return ConspiracyResponse(**session.result)
+    response = ConspiracyResponse(**session.result)
+    response.created_at = session.created_at
+    return response
