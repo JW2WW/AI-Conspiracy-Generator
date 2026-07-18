@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from app.services.llm import MockProvider, OpenAIProvider, parse_judge_scores
+from app.services.llm import MockProvider, parse_judge_scores
 
 
 @pytest.mark.asyncio

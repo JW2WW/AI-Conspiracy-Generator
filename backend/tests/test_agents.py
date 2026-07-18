@@ -2,7 +2,7 @@
 
 import pytest
 
-from app.agents.base import TheoryAgent, InvestigatorAgent, EvidenceAgent
+from app.agents.base import EvidenceAgent, InvestigatorAgent, TheoryAgent
 from app.models.schemas import GameMode
 from app.services.llm import MockProvider
 

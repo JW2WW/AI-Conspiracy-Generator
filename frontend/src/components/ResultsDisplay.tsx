@@ -22,12 +22,16 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
       {result.debate_rounds.length <= 1 && (
         <>
           <div className="card agent-theory">
-            <h3 className="mb-3 font-display text-lg font-bold text-conspiracy-400">Theory Agent</h3>
+            <h3 className="mb-3 font-display text-lg font-bold text-conspiracy-400">
+              Theory Agent
+            </h3>
             <p className="whitespace-pre-wrap text-gray-300">{result.theory}</p>
           </div>
 
           <div className="card agent-investigator">
-            <h3 className="mb-3 font-display text-lg font-bold text-emerald-400">Investigator Agent</h3>
+            <h3 className="mb-3 font-display text-lg font-bold text-emerald-400">
+              Investigator Agent
+            </h3>
             <p className="whitespace-pre-wrap text-gray-300">{result.investigation}</p>
           </div>
         </>

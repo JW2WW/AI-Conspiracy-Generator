@@ -8,6 +8,9 @@ select = ["E", "F", "I", "W", "UP", "N", "B", "SIM", "ARG", "RUF"]
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path"]
+
 [tool.ruff.format]
 quote-style = "double"
 

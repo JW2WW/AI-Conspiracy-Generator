@@ -1,11 +1,5 @@
 export type GameMode =
-  | 'classic'
-  | 'xfiles'
-  | 'corporate'
-  | 'time_traveler'
-  | 'ancient'
-  | 'debate'
-  | 'escalation'
+  'classic' | 'xfiles' | 'corporate' | 'time_traveler' | 'ancient' | 'debate' | 'escalation'
 
 export interface GameModeInfo {
   id: GameMode

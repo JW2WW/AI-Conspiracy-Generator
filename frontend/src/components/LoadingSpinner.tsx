@@ -2,7 +2,9 @@ interface LoadingSpinnerProps {
   message?: string
 }
 
-export default function LoadingSpinner({ message = 'Agents are conspiring...' }: LoadingSpinnerProps) {
+export default function LoadingSpinner({
+  message = 'Agents are conspiring...',
+}: LoadingSpinnerProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16">
       <div className="relative h-16 w-16">

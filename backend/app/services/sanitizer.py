@@ -28,9 +28,5 @@ def sanitize_event(event: str) -> str:
 def _strip_injection_attempts(text: str) -> str:
     """Remove lines that look like instruction overrides."""
     lines = text.splitlines()
-    clean = [
-        line
-        for line in lines
-        if not _SUSPICIOUS_PATTERNS.search(line)
-    ]
+    clean = [line for line in lines if not _SUSPICIOUS_PATTERNS.search(line)]
     return "\n".join(clean).strip() or text[:100]

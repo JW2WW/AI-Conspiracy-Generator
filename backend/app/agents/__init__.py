@@ -7,9 +7,9 @@ from app.agents.base import (
 )
 
 __all__ = [
-    "TheoryAgent",
+    "EvidenceAgent",
     "InvestigatorAgent",
     "JudgeAgent",
-    "EvidenceAgent",
     "RealityRestoredEngine",
+    "TheoryAgent",
 ]

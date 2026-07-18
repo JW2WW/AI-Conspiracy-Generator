@@ -2,6 +2,7 @@ import json
 import random
 import re
 from abc import ABC, abstractmethod
+from typing import ClassVar
 
 from anthropic import AsyncAnthropic
 from openai import AsyncOpenAI
@@ -50,7 +51,7 @@ class AnthropicProvider(LLMProvider):
 class MockProvider(LLMProvider):
     """Template-based responses for demo mode without API keys."""
 
-    CORPORATIONS = [
+    CORPORATIONS: ClassVar[list[str]] = [
         "Global Acorn Dynamics Corporation",
         "OmniSquirrel Industries",
         "Nexus Timeline Holdings",
@@ -103,10 +104,17 @@ class MockProvider(LLMProvider):
 
     def _theory(self, event: str, mode: str, round_num: int) -> str:
         corp = random.choice(self.CORPORATIONS)
+        if round_num == 1:
+            debate_villain = "squirrel operatives"
+        elif round_num == 2:
+            debate_villain = "a global shadow network"
+        else:
+            debate_villain = "interdimensional puppet masters"
         theories = {
             "classic": [
                 f"The event ({event}) coincided with three missing cats and a delivery truck from an unknown company. "
-                "This strongly suggests an underground squirrel organization is testing electromagnetic acorn technology.",
+                "This strongly suggests an underground squirrel organization is testing "
+                "electromagnetic acorn technology.",
                 f"Regarding '{event}': local pigeons have been observed wearing tiny reflective bands. "
                 "Clearly a coordinated surveillance network is monitoring civilian activity.",
             ],
@@ -143,15 +151,14 @@ class MockProvider(LLMProvider):
                 "when all timelines converge into one giant hazelnut.",
             ],
             "debate": [
-                f"Round {round_num} theory: '{event}' proves a coordinated conspiracy involving "
-                f"{'squirrel operatives' if round_num == 1 else 'a global shadow network' if round_num == 2 else 'interdimensional puppet masters'}.",
+                f"Round {round_num} theory: '{event}' proves a coordinated conspiracy involving " f"{debate_villain}.",
             ],
         }
         options = theories.get(mode, theories["classic"])
         idx = min(round_num - 1, len(options) - 1)
         return options[idx]
 
-    def _investigator(self, event: str, mode: str, round_num: int) -> str:
+    def _investigator(self, event: str, _mode: str, round_num: int) -> str:
         causes = [
             "a contractor accidentally struck a transformer with a backhoe",
             "routine maintenance on aging infrastructure",
@@ -168,7 +175,7 @@ class MockProvider(LLMProvider):
             "Correlation with unrelated events does not establish causation."
         )
 
-    def _evidence(self, event: str, mode: str, round_num: int) -> str:
+    def _evidence(self, event: str, _mode: str, _round_num: int) -> str:
         return (
             f"Evidence summary for '{event}':\n\n"
             "- Timestamp: Event occurred during standard business hours\n"
@@ -178,23 +185,25 @@ class MockProvider(LLMProvider):
             "- Contradictions in conspiracy narrative: Multiple mutually exclusive explanations proposed"
         )
 
-    def _judge(self, event: str, mode: str, round_num: int) -> str:
+    def _judge(self, event: str, _mode: str, _round_num: int) -> str:
         creativity = random.randint(7, 10)
         plausibility = random.randint(0, 2)
         evidence_score = random.randint(0, 2)
         comedy = random.randint(7, 10)
-        return json.dumps({
-            "creativity": creativity,
-            "plausibility": plausibility,
-            "evidence": evidence_score,
-            "comedy": comedy,
-            "commentary": (
-                f"A masterclass in narrative construction around '{event}'. "
-                "Creatively brilliant, empirically bankrupt — exactly as intended."
-            ),
-        })
+        return json.dumps(
+            {
+                "creativity": creativity,
+                "plausibility": plausibility,
+                "evidence": evidence_score,
+                "comedy": comedy,
+                "commentary": (
+                    f"A masterclass in narrative construction around '{event}'. "
+                    "Creatively brilliant, empirically bankrupt — exactly as intended."
+                ),
+            }
+        )
 
-    def _reality(self, event: str, mode: str, round_num: int) -> str:
+    def _reality(self, event: str, _mode: str, _round_num: int) -> str:
         return (
             f"Actual Cause\n\n"
             f"After reviewing all available evidence regarding '{event}', "

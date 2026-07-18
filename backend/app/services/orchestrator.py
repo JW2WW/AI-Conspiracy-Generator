@@ -1,8 +1,8 @@
-from datetime import datetime, timezone
 import asyncio
 import hashlib
 import json
 import uuid
+from datetime import UTC, datetime
 
 import redis.asyncio as redis
 
@@ -41,11 +41,9 @@ class ConspiracyOrchestrator:
 
     async def generate(self, request: ConspiracyRequest) -> ConspiracyResponse:
         try:
-            return await asyncio.wait_for(
-                self._generate_inner(request), timeout=self._TIMEOUT_SECONDS
-            )
-        except asyncio.TimeoutError:
-            raise RuntimeError("Generation timed out. Try a simpler event or fewer rounds.")
+            return await asyncio.wait_for(self._generate_inner(request), timeout=self._TIMEOUT_SECONDS)
+        except TimeoutError:
+            raise RuntimeError("Generation timed out. Try a simpler event or fewer rounds.") from None
 
     async def _generate_inner(self, request: ConspiracyRequest) -> ConspiracyResponse:
         safe_event = sanitize_event(request.event)
@@ -69,16 +67,10 @@ class ConspiracyOrchestrator:
         final_investigation = ""
 
         for round_num in range(1, num_rounds + 1):
-            theory = await self.theory_agent.generate(
-                safe_event, request.game_mode, round_num, context
-            )
-            investigation = await self.investigator_agent.investigate(
-                safe_event, theory, round_num
-            )
+            theory = await self.theory_agent.generate(safe_event, request.game_mode, round_num, context)
+            investigation = await self.investigator_agent.investigate(safe_event, theory, round_num)
 
-            debate_rounds.append(
-                DebateRound(round_number=round_num, theory=theory, investigation=investigation)
-            )
+            debate_rounds.append(DebateRound(round_number=round_num, theory=theory, investigation=investigation))
             all_theories.append(theory)
             all_investigations.append(investigation)
             final_theory = theory
@@ -100,7 +92,7 @@ class ConspiracyOrchestrator:
             debate_rounds=debate_rounds,
             scores=scores,
             reality_restored=reality,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
             metadata={"llm_provider": settings.llm_provider, "rounds": num_rounds},
         )
 
@@ -109,7 +101,7 @@ class ConspiracyOrchestrator:
 
     async def close(self) -> None:
         if self._redis:
-            await self._redis.close()
+            await self._redis.aclose()
 
 
 orchestrator = ConspiracyOrchestrator()

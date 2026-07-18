@@ -10,7 +10,7 @@ from app.services.orchestrator import orchestrator
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     await init_db()
     yield
     await orchestrator.close()

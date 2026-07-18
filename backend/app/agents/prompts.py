@@ -13,19 +13,14 @@ MODE_INSTRUCTIONS: dict[GameMode, str] = {
         "Blame everything on a fictional mega-corporation. Invent corporate names "
         "and describe sinister business motives."
     ),
-    GameMode.TIME_TRAVELER: (
-        "Explain everything through timeline manipulation, paradoxes, and multiverse theory."
-    ),
-    GameMode.ANCIENT: (
-        "Trace everything back to lost civilizations, ancient technology, or mysterious artifacts."
-    ),
+    GameMode.TIME_TRAVELER: ("Explain everything through timeline manipulation, paradoxes, and multiverse theory."),
+    GameMode.ANCIENT: ("Trace everything back to lost civilizations, ancient technology, or mysterious artifacts."),
     GameMode.DEBATE: (
         "Engage in multi-round debate. Each round should respond to prior investigation "
         "while escalating the conspiracy."
     ),
     GameMode.ESCALATION: (
-        "Each round MUST be more absurd than the previous. Start plausible-ish, "
-        "end in complete surrealism."
+        "Each round MUST be more absurd than the previous. Start plausible-ish, " "end in complete surrealism."
     ),
 }
 

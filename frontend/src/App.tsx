@@ -66,9 +66,7 @@ export default function App() {
       <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-6">
           <div>
-            <h1 className="font-display text-3xl font-bold text-white">
-              AI Conspiracy Generator
-            </h1>
+            <h1 className="font-display text-3xl font-bold text-white">AI Conspiracy Generator</h1>
             <p className="mt-1 text-sm text-gray-400">
               Where AI agents create absurd theories — then debunk them
             </p>
