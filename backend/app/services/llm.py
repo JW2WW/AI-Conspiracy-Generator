@@ -1,3 +1,4 @@
+import asyncio
 import json
 import random
 import re
@@ -16,13 +17,36 @@ class LLMProvider(ABC):
         pass
 
 
-class OpenAIProvider(LLMProvider):
-    def __init__(self) -> None:
-        self.client = AsyncOpenAI(api_key=settings.openai_api_key)
+def _response_error(response) -> str:
+    """Extract an error description from a chat completion that has no choices.
 
-    async def generate(self, system_prompt: str, user_prompt: str) -> str:
-        response = await self.client.chat.completions.create(
-            model=settings.openai_model,
+    OpenAI-compatible gateways (notably OpenRouter free models) sometimes return
+    an HTTP 200 body with no ``choices`` and an ``error`` field instead.
+    """
+    error = getattr(response, "error", None)
+    if error is None and getattr(response, "model_extra", None):
+        error = response.model_extra.get("error")
+    if isinstance(error, dict):
+        return error.get("message") or json.dumps(error)
+    if error:
+        return str(error)
+    return "the model returned no choices"
+
+
+async def _chat_completion(
+    client: AsyncOpenAI, model: str, system_prompt: str, user_prompt: str, attempts: int = 3
+) -> str:
+    """Call an OpenAI-compatible chat endpoint, retrying transient empty responses.
+
+    Free/community models occasionally return a body without ``choices`` when the
+    upstream provider is momentarily overloaded or rate limited. Retrying a couple
+    of times makes a multi-agent run far more reliable than failing the whole
+    generation on the first hiccup.
+    """
+    last_error = "unknown error"
+    for attempt in range(attempts):
+        response = await client.chat.completions.create(
+            model=model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
@@ -30,7 +54,20 @@ class OpenAIProvider(LLMProvider):
             temperature=0.9,
             max_tokens=800,
         )
-        return response.choices[0].message.content or ""
+        if getattr(response, "choices", None):
+            return response.choices[0].message.content or ""
+        last_error = _response_error(response)
+        if attempt < attempts - 1:
+            await asyncio.sleep(2**attempt)
+    raise RuntimeError(f"LLM request to '{model}' failed: {last_error}")
+
+
+class OpenAIProvider(LLMProvider):
+    def __init__(self) -> None:
+        self.client = AsyncOpenAI(api_key=settings.openai_api_key, timeout=60.0, max_retries=2)
+
+    async def generate(self, system_prompt: str, user_prompt: str) -> str:
+        return await _chat_completion(self.client, settings.openai_model, system_prompt, user_prompt)
 
 
 class OpenRouterProvider(LLMProvider):
@@ -40,6 +77,8 @@ class OpenRouterProvider(LLMProvider):
         self.client = AsyncOpenAI(
             api_key=settings.openrouter_api_key,
             base_url=settings.openrouter_base_url,
+            timeout=60.0,
+            max_retries=2,
             default_headers={
                 "HTTP-Referer": settings.openrouter_site_url,
                 "X-OpenRouter-Title": settings.openrouter_app_name,
@@ -47,16 +86,7 @@ class OpenRouterProvider(LLMProvider):
         )
 
     async def generate(self, system_prompt: str, user_prompt: str) -> str:
-        response = await self.client.chat.completions.create(
-            model=settings.openrouter_model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.9,
-            max_tokens=800,
-        )
-        return response.choices[0].message.content or ""
+        return await _chat_completion(self.client, settings.openrouter_model, system_prompt, user_prompt)
 
 
 class AnthropicProvider(LLMProvider):

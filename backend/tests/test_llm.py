@@ -1,11 +1,41 @@
 """Tests for the LLM provider layer."""
 
 import json
+import types
 
 import pytest
 
 from app.config import settings
-from app.services.llm import MockProvider, OpenRouterProvider, get_llm_provider, parse_judge_scores
+from app.services.llm import (
+    MockProvider,
+    OpenRouterProvider,
+    _chat_completion,
+    get_llm_provider,
+    parse_judge_scores,
+)
+
+
+def _make_response(content: str | None = None, error: object = None):
+    if content is not None:
+        message = types.SimpleNamespace(content=content)
+        return types.SimpleNamespace(choices=[types.SimpleNamespace(message=message)], error=None)
+    return types.SimpleNamespace(choices=None, error=error)
+
+
+class _FakeCompletions:
+    def __init__(self, responses):
+        self._responses = list(responses)
+        self.calls = 0
+
+    async def create(self, **_kwargs):
+        response = self._responses[self.calls]
+        self.calls += 1
+        return response
+
+
+class _FakeClient:
+    def __init__(self, responses):
+        self.chat = types.SimpleNamespace(completions=_FakeCompletions(responses))
 
 
 @pytest.mark.asyncio
@@ -47,6 +77,39 @@ def test_openrouter_requires_api_key(monkeypatch: pytest.MonkeyPatch):
 
     with pytest.raises(ValueError, match="OPENROUTER_API_KEY"):
         get_llm_provider()
+
+
+@pytest.mark.asyncio
+async def test_chat_completion_returns_content():
+    client = _FakeClient([_make_response(content="the truth is out there")])
+    result = await _chat_completion(client, "some/model", "sys", "user")
+    assert result == "the truth is out there"
+
+
+@pytest.mark.asyncio
+async def test_chat_completion_retries_transient_empty_response(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr("app.services.llm.asyncio.sleep", _noop_sleep)
+    client = _FakeClient(
+        [
+            _make_response(error={"message": "temporarily rate-limited"}),
+            _make_response(content="recovered"),
+        ]
+    )
+    result = await _chat_completion(client, "some/model", "sys", "user")
+    assert result == "recovered"
+    assert client.chat.completions.calls == 2
+
+
+@pytest.mark.asyncio
+async def test_chat_completion_raises_after_exhausting_retries(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr("app.services.llm.asyncio.sleep", _noop_sleep)
+    client = _FakeClient([_make_response(error={"message": "upstream is down"}) for _ in range(3)])
+    with pytest.raises(RuntimeError, match="upstream is down"):
+        await _chat_completion(client, "some/model", "sys", "user")
+
+
+async def _noop_sleep(_seconds: float) -> None:
+    return None
 
 
 def test_parse_judge_scores_valid_json():
