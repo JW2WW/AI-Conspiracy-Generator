@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
     openrouter_api_key: str | None = None
+    gemini_api_key: str | None = None
     llm_provider: str = "mock"
     openai_model: str = "gpt-4o-mini"
     anthropic_model: str = "claude-3-5-haiku-20241022"
@@ -35,6 +36,8 @@ class Settings(BaseSettings):
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
     openrouter_site_url: str = "https://github.com/JW2WW/AI-Conspiracy-Generator"
     openrouter_app_name: str = "AI Conspiracy Generator"
+    gemini_model: str = "gemini-2.5-flash"
+    gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 

@@ -10,6 +10,7 @@ def _force_mock_provider(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(settings, "openai_api_key", None)
     monkeypatch.setattr(settings, "anthropic_api_key", None)
     monkeypatch.setattr(settings, "openrouter_api_key", None)
+    monkeypatch.setattr(settings, "gemini_api_key", None)
 
 
 @pytest.fixture(autouse=True)

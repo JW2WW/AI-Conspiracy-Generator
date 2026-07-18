@@ -366,6 +366,7 @@ Final Results
 ## AI
 
 - OpenRouter (including free models)
+- Google Gemini (Google AI Studio)
 - OpenAI GPT Models
 - Anthropic Claude
 - Template-based mock provider
@@ -448,9 +449,11 @@ Copy `.env.example` to `.env` and adjust as needed:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LLM_PROVIDER` | `mock` | LLM backend: `mock`, `openrouter`, `openai`, or `anthropic` |
+| `LLM_PROVIDER` | `mock` | LLM backend: `mock`, `openrouter`, `gemini`, `openai`, or `anthropic` |
 | `OPENROUTER_API_KEY` | — | Required when `LLM_PROVIDER=openrouter` |
 | `OPENROUTER_MODEL` | `openrouter/free` | OpenRouter model ID or free-model router |
+| `GEMINI_API_KEY` | — | Required when `LLM_PROVIDER=gemini` (Google AI Studio key) |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini model ID |
 | `OPENAI_API_KEY` | — | Required when `LLM_PROVIDER=openai` |
 | `ANTHROPIC_API_KEY` | — | Required when `LLM_PROVIDER=anthropic` |
 | `DATABASE_URL` | `postgresql+asyncpg://conspiracy:conspiracy@localhost:5432/conspiracy` | PostgreSQL connection string |
@@ -474,6 +477,18 @@ OPENROUTER_MODEL=openrouter/free
 `openrouter/free` automatically selects an available free model. To pin a model, use an ID from the [OpenRouter model catalog](https://openrouter.ai/models) whose name ends in `:free`.
 
 Free access is rate-limited and model availability can change. A one-round generation makes five model requests (evidence, theory, investigation, judging, and reality restoration), with two more requests for each additional round. The default free-account allowance therefore supports approximately ten one-round generations per day.
+
+### Google Gemini (Google AI Studio)
+
+Create a key at [Google AI Studio](https://aistudio.google.com/app/apikey), which includes a free tier, then set:
+
+```dotenv
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=your-key-here
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+Gemini is used through its OpenAI-compatible endpoint, so no extra dependencies are required. Pick any model your key can access (e.g. `gemini-2.5-flash` for speed, `gemini-2.5-pro` for quality).
 
 For direct OpenAI or Anthropic access, set `LLM_PROVIDER=openai` or `anthropic` and provide the corresponding API key.
 

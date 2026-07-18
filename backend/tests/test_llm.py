@@ -7,6 +7,7 @@ import pytest
 
 from app.config import settings
 from app.services.llm import (
+    GeminiProvider,
     MockProvider,
     OpenRouterProvider,
     _chat_completion,
@@ -76,6 +77,24 @@ def test_openrouter_requires_api_key(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(settings, "openrouter_api_key", None)
 
     with pytest.raises(ValueError, match="OPENROUTER_API_KEY"):
+        get_llm_provider()
+
+
+def test_get_gemini_provider(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "llm_provider", "gemini")
+    monkeypatch.setattr(settings, "gemini_api_key", "test-key")
+
+    provider = get_llm_provider()
+
+    assert isinstance(provider, GeminiProvider)
+    assert str(provider.client.base_url) == "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+
+def test_gemini_requires_api_key(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "llm_provider", "gemini")
+    monkeypatch.setattr(settings, "gemini_api_key", None)
+
+    with pytest.raises(ValueError, match="GEMINI_API_KEY"):
         get_llm_provider()
 
 

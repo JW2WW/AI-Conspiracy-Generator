@@ -89,6 +89,21 @@ class OpenRouterProvider(LLMProvider):
         return await _chat_completion(self.client, settings.openrouter_model, system_prompt, user_prompt)
 
 
+class GeminiProvider(LLMProvider):
+    """Google AI Studio (Gemini) provider via its OpenAI-compatible endpoint."""
+
+    def __init__(self) -> None:
+        self.client = AsyncOpenAI(
+            api_key=settings.gemini_api_key,
+            base_url=settings.gemini_base_url,
+            timeout=60.0,
+            max_retries=2,
+        )
+
+    async def generate(self, system_prompt: str, user_prompt: str) -> str:
+        return await _chat_completion(self.client, settings.gemini_model, system_prompt, user_prompt)
+
+
 class AnthropicProvider(LLMProvider):
     def __init__(self) -> None:
         self.client = AsyncAnthropic(api_key=settings.anthropic_api_key)
@@ -281,6 +296,10 @@ def get_llm_provider() -> LLMProvider:
         if not settings.openrouter_api_key:
             raise ValueError("OPENROUTER_API_KEY is required when LLM_PROVIDER=openrouter")
         return OpenRouterProvider()
+    if provider == "gemini":
+        if not settings.gemini_api_key:
+            raise ValueError("GEMINI_API_KEY is required when LLM_PROVIDER=gemini")
+        return GeminiProvider()
     if provider == "anthropic":
         if not settings.anthropic_api_key:
             raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
