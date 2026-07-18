@@ -365,9 +365,10 @@ Final Results
 
 ## AI
 
+- OpenRouter (including free models)
 - OpenAI GPT Models
 - Anthropic Claude
-- Local LLM Support (mock provider)
+- Template-based mock provider
 
 ---
 
@@ -447,7 +448,9 @@ Copy `.env.example` to `.env` and adjust as needed:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LLM_PROVIDER` | `mock` | LLM backend: `mock`, `openai`, or `anthropic` |
+| `LLM_PROVIDER` | `mock` | LLM backend: `mock`, `openrouter`, `openai`, or `anthropic` |
+| `OPENROUTER_API_KEY` | — | Required when `LLM_PROVIDER=openrouter` |
+| `OPENROUTER_MODEL` | `openrouter/free` | OpenRouter model ID or free-model router |
 | `OPENAI_API_KEY` | — | Required when `LLM_PROVIDER=openai` |
 | `ANTHROPIC_API_KEY` | — | Required when `LLM_PROVIDER=anthropic` |
 | `DATABASE_URL` | `postgresql+asyncpg://conspiracy:conspiracy@localhost:5432/conspiracy` | PostgreSQL connection string |
@@ -456,7 +459,23 @@ Copy `.env.example` to `.env` and adjust as needed:
 | `POSTGRES_PASSWORD` | `conspiracy` | PostgreSQL password (Docker only) |
 | `POSTGRES_DB` | `conspiracy` | PostgreSQL database name (Docker only) |
 
-**Mock mode** works out of the box with no API keys — it uses template-based responses for demo and development. Set `LLM_PROVIDER=openai` or `anthropic` and provide the corresponding API key for live LLM-generated theories.
+**Mock mode** works out of the box with no API keys — it uses template-based responses for demo and development.
+
+### Free models with OpenRouter
+
+[OpenRouter](https://openrouter.ai/) offers API access to a changing pool of free models. Create an API key, then set:
+
+```dotenv
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=your-key-here
+OPENROUTER_MODEL=openrouter/free
+```
+
+`openrouter/free` automatically selects an available free model. To pin a model, use an ID from the [OpenRouter model catalog](https://openrouter.ai/models) whose name ends in `:free`.
+
+Free access is rate-limited and model availability can change. A one-round generation makes five model requests (evidence, theory, investigation, judging, and reality restoration), with two more requests for each additional round. The default free-account allowance therefore supports approximately ten one-round generations per day.
+
+For direct OpenAI or Anthropic access, set `LLM_PROVIDER=openai` or `anthropic` and provide the corresponding API key.
 
 ---
 
@@ -472,8 +491,8 @@ python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-# Start PostgreSQL and Redis (or use Docker for just these services)
-docker compose up postgres redis -d
+# Start PostgreSQL and Redis (compose file is in the repository root)
+docker compose -f ../docker-compose.yml up postgres redis -d
 
 # Run the API server
 export DATABASE_URL=postgresql+asyncpg://conspiracy:conspiracy@localhost:5432/conspiracy

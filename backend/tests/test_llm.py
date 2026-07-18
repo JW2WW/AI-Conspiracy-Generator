@@ -4,7 +4,8 @@ import json
 
 import pytest
 
-from app.services.llm import MockProvider, parse_judge_scores
+from app.config import settings
+from app.services.llm import MockProvider, OpenRouterProvider, get_llm_provider, parse_judge_scores
 
 
 @pytest.mark.asyncio
@@ -28,6 +29,24 @@ async def test_mock_provider_returns_judge_json():
     parsed = json.loads(result)
     assert isinstance(parsed["creativity"], int)
     assert 0 <= parsed["creativity"] <= 10
+
+
+def test_get_openrouter_provider(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "llm_provider", "openrouter")
+    monkeypatch.setattr(settings, "openrouter_api_key", "test-key")
+
+    provider = get_llm_provider()
+
+    assert isinstance(provider, OpenRouterProvider)
+    assert str(provider.client.base_url) == "https://openrouter.ai/api/v1/"
+
+
+def test_openrouter_requires_api_key(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(settings, "llm_provider", "openrouter")
+    monkeypatch.setattr(settings, "openrouter_api_key", None)
+
+    with pytest.raises(ValueError, match="OPENROUTER_API_KEY"):
+        get_llm_provider()
 
 
 def test_parse_judge_scores_valid_json():

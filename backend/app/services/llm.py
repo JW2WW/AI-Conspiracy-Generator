@@ -33,6 +33,32 @@ class OpenAIProvider(LLMProvider):
         return response.choices[0].message.content or ""
 
 
+class OpenRouterProvider(LLMProvider):
+    """OpenRouter provider using its OpenAI-compatible API."""
+
+    def __init__(self) -> None:
+        self.client = AsyncOpenAI(
+            api_key=settings.openrouter_api_key,
+            base_url=settings.openrouter_base_url,
+            default_headers={
+                "HTTP-Referer": settings.openrouter_site_url,
+                "X-OpenRouter-Title": settings.openrouter_app_name,
+            },
+        )
+
+    async def generate(self, system_prompt: str, user_prompt: str) -> str:
+        response = await self.client.chat.completions.create(
+            model=settings.openrouter_model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.9,
+            max_tokens=800,
+        )
+        return response.choices[0].message.content or ""
+
+
 class AnthropicProvider(LLMProvider):
     def __init__(self) -> None:
         self.client = AsyncAnthropic(api_key=settings.anthropic_api_key)
@@ -215,11 +241,21 @@ class MockProvider(LLMProvider):
 
 def get_llm_provider() -> LLMProvider:
     provider = settings.llm_provider.lower()
-    if provider == "openai" and settings.openai_api_key:
+    if provider == "mock":
+        return MockProvider()
+    if provider == "openai":
+        if not settings.openai_api_key:
+            raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
         return OpenAIProvider()
-    if provider == "anthropic" and settings.anthropic_api_key:
+    if provider == "openrouter":
+        if not settings.openrouter_api_key:
+            raise ValueError("OPENROUTER_API_KEY is required when LLM_PROVIDER=openrouter")
+        return OpenRouterProvider()
+    if provider == "anthropic":
+        if not settings.anthropic_api_key:
+            raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
         return AnthropicProvider()
-    return MockProvider()
+    raise ValueError(f"Unsupported LLM_PROVIDER: {settings.llm_provider}")
 
 
 def parse_judge_scores(text: str) -> dict:

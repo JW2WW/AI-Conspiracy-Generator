@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +14,8 @@ from app.models import (
     get_db,
 )
 from app.services.orchestrator import orchestrator
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -72,7 +76,8 @@ async def generate_conspiracy(
     try:
         result = await orchestrator.generate(request)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail="Generation failed. Please try again.") from exc
+        logger.exception("Conspiracy generation failed for provider=%s", settings.llm_provider)
+        raise HTTPException(status_code=502, detail=f"Generation failed: {exc}") from exc
 
     session = ConspiracySession(
         id=result.id,
