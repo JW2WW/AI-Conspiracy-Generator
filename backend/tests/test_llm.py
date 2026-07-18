@@ -11,6 +11,7 @@ from app.services.llm import (
     MockProvider,
     OpenRouterProvider,
     _chat_completion,
+    _strip_thought_blocks,
     get_llm_provider,
     parse_judge_scores,
 )
@@ -129,6 +130,16 @@ async def test_chat_completion_raises_after_exhausting_retries(monkeypatch: pyte
 
 async def _noop_sleep(_seconds: float) -> None:
     return None
+
+
+def test_strip_thought_blocks_removes_reasoning():
+    text = "<thought>planning the joke</thought>\nThe squirrels did it."
+    assert _strip_thought_blocks(text) == "The squirrels did it."
+
+
+def test_strip_thought_blocks_keeps_raw_when_only_thought():
+    text = "<thought>still thinking</thought>"
+    assert _strip_thought_blocks(text) == text
 
 
 def test_parse_judge_scores_valid_json():

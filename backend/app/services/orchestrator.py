@@ -20,7 +20,7 @@ from app.services.sanitizer import sanitize_event
 
 
 class ConspiracyOrchestrator:
-    _TIMEOUT_SECONDS = 120
+    _TIMEOUT_SECONDS = 180
 
     def __init__(self) -> None:
         llm = get_llm_provider()
@@ -53,6 +53,9 @@ class ConspiracyOrchestrator:
         cached = await r.get(cache_key)
         if cached:
             data = json.loads(cached)
+            # Mint a fresh id so persisted sessions don't collide with prior inserts.
+            data["id"] = str(uuid.uuid4())
+            data["created_at"] = datetime.now(UTC).isoformat()
             return ConspiracyResponse(**data)
 
         num_rounds = self._rounds_for_mode(request)

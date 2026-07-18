@@ -33,6 +33,15 @@ def _response_error(response) -> str:
     return "the model returned no choices"
 
 
+_THOUGHT_RE = re.compile(r"<thought>.*?</thought>", re.DOTALL | re.IGNORECASE)
+
+
+def _strip_thought_blocks(text: str) -> str:
+    """Remove model reasoning blocks that some Gemini/Gemma models emit inline."""
+    cleaned = _THOUGHT_RE.sub("", text).strip()
+    return cleaned or text.strip()
+
+
 async def _chat_completion(
     client: AsyncOpenAI, model: str, system_prompt: str, user_prompt: str, attempts: int = 3
 ) -> str:
@@ -52,10 +61,10 @@ async def _chat_completion(
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.9,
-            max_tokens=800,
+            max_tokens=1600,
         )
         if getattr(response, "choices", None):
-            return response.choices[0].message.content or ""
+            return _strip_thought_blocks(response.choices[0].message.content or "")
         last_error = _response_error(response)
         if attempt < attempts - 1:
             await asyncio.sleep(2**attempt)

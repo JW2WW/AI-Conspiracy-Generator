@@ -8,8 +8,13 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
     ...options,
   })
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Request failed' }))
-    throw new Error(error.detail || `HTTP ${response.status}`)
+    const error = await response.json().catch(() => null)
+    const detail =
+      (error && typeof error === 'object' && 'detail' in error && String(error.detail)) ||
+      (response.status === 504
+        ? 'Request timed out waiting for the model. Try a faster model (e.g. gemini-2.5-flash) or fewer rounds.'
+        : `Request failed (HTTP ${response.status})`)
+    throw new Error(detail)
   }
   return response.json()
 }
