@@ -27,8 +27,10 @@ The result is a humorous demonstration of how narratives, assumptions, and specu
 ---
 
 # Screenshots
-
-> *Screenshots coming soon — contributions welcome!*
+---
+<img width="1471" height="1909" alt="AI_Conspiracy_Generator_Screenshot_1" src="https://github.com/user-attachments/assets/da19b2c9-a212-42bc-aca1-7eed0fed635f" />
+<img width="1416" height="1681" alt="AI_Conspiracy_Generator_Screenshot_2" src="https://github.com/user-attachments/assets/2ddd8e6e-e7b5-43f7-b49f-664c4007a9e1" />
+<img width="1490" height="1209" alt="AI_Conspiracy_Generator_Screenshot_3" src="https://github.com/user-attachments/assets/5b7e85b2-07c9-41b5-ab53-3c3f4e12d1ca" />
 
 ---
 
